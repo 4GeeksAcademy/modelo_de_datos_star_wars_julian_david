@@ -18,7 +18,9 @@ class User(db.Model):
         return {
             "id": self.id,
             "nombre": self.nombre,
-            # do not serialize the password, its a security breach
+            "apellido": self.apellido,
+            "email": self.email,
+            "fecha_de_subscripcion": self.fecha_de_subscripcion
         }
     
 class Planeta(db.Model):
@@ -30,8 +32,9 @@ class Planeta(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
-            # do not serialize the password, its a security breach
+            "nombre": self.nombre,
+            "poblacion": self.poblacion,
+            "clima": self.clima
         }
 
 class Personaje(db.Model):
@@ -42,6 +45,16 @@ class Personaje(db.Model):
     origen: Mapped[str] = mapped_column(String(120), nullable=False)
     color_de_ojos: Mapped[str] = mapped_column(String(120), nullable=False)
 
+    def serialize(self):
+        return{
+            "id": self.id,
+            "nombre": self.nombre,
+            "edad": self.edad,
+            "raza": self.raza,
+            "origen": self.origen,
+            "color_de_ojos": self.color_de_ojos
+        }
+
 class Favorito(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
 
@@ -51,6 +64,13 @@ class Favorito(db.Model):
     planeta_id: Mapped[int] = mapped_column(db.ForeignKey("planeta.id"))
     planeta: Mapped["Planeta"] = db.relationship(backref="favorites") #crea relación en la tabla Favorito
 
-    personaje: Mapped[int] = mapped_column(db.ForeignKey("personaje.id"))
+    personaje_id: Mapped[int] = mapped_column(db.ForeignKey("personaje.id"))
     personaje: Mapped["Personaje"] = db.relationship(backref="favorites") #crea relación en tabla Personaje
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "usuario_id": self.usuario_id,
+            "planeta_id": self.planeta_id,
+            "personaje": self.personaje
+    }
